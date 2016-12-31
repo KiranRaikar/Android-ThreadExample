@@ -21,18 +21,26 @@ public class MainActivity extends AppCompatActivity {
 
     public void buttonTouchMe(View view) {
         Log.i(TAG, "You touched the button!");
-        long futureTime = System.currentTimeMillis() + 10000;
-        while (System.currentTimeMillis() < futureTime) {
-            synchronized (this) {
-                try {
-                    wait(futureTime - System.currentTimeMillis());
-                } catch (Exception e) {
-                    Log.i(TAG,  Log.getStackTraceString(e));
-                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                long futureTime = System.currentTimeMillis() + 10000;
+                while (System.currentTimeMillis() < futureTime) {
+                    synchronized (this) {
+                        try {
+                            Log.i(TAG, "Wait for 10Sec...");
+                            wait(futureTime - System.currentTimeMillis());
+                        } catch (Exception e) {
+                            Log.i(TAG,  Log.getStackTraceString(e));
+                            // Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+
                 }
             }
-            textViewMessage = (TextView) findViewById(R.id.textViewMessage);
-            textViewMessage.setText("Nice Job Kina!");
-        }
+        };
+
+        Thread kinasThread = new Thread(runnable);
+        kinasThread.start();
     }
 }
